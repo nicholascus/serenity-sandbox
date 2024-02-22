@@ -45,6 +45,9 @@ public class SearchSteps extends UIInteractionSteps {
         find(SearchForm.DATE_RETURN_INPUT).type(dateInTwoWeeks);
         find(SearchForm.DATE_RETURN_INPUT).sendKeys(Keys.ENTER);
 
+        // Close the date picker
+        find(SearchForm.DATE_RETURN_INPUT).sendKeys(Keys.ESCAPE);
+
         find(SearchForm.SEARCH_BUTTON).click();
         find(BEST.getTarget()).withTimeoutOf(Duration.ofSeconds(100)).waitUntilVisible();
     }
