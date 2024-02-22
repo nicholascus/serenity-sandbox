@@ -33,7 +33,7 @@ public class SearchStepDefinitions {
     SearchSteps search;
 
     @Given("^(?:.*) is on Google Flights home page")
-    public void researchingThings() {
+    public void navigateToGoogleFlightPage() {
         navigate.opensTheHomePage();
     }
 
