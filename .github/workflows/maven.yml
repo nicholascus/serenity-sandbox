@@ -24,8 +24,12 @@ jobs:
     - name: Build with Maven
       run: mvn -B verify --file pom.xml
       continue-on-error: true
+    - run: |
+        zip -r target/site/serenity-report.zip target/site/serenity/
+      if: always()
     - name: Upload test results
       uses: actions/upload-artifact@v2
+      if: always()
       with:
-        name: test-results
-        path: target/site/serenity/
+        name: test-report
+        path: target/site/serenity-report.zip
