@@ -2,8 +2,7 @@ package starter.actions;
 
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.core.steps.UIInteractionSteps;
-import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
+import starter.pageobjects.ExploreDestinations;
 import starter.pageobjects.SearchForm;
 import starter.pageobjects.SearchResults;
 
@@ -21,14 +20,12 @@ public class SearchSteps extends UIInteractionSteps {
     SearchForm searchForm;
     SearchResults searchResults;
 
+    ExploreDestinations exploreDestinations;
+
     @Step("User searches for flights from '{0}' to '{1}' in {2} days for a {3} days")
     public void searchForFlight(String origin, String destination, int leaveInDays, int stayForDays) {
-        find(SearchForm.LOCATION_FROM_FIELD).click();
-        find(SearchForm.LOCATION_FROM_INPUT).sendKeys(origin);
-        find(SearchForm.LOCATION_FROM_INPUT).sendKeys(Keys.ENTER);
-        find(SearchForm.LOCATION_TO_FIELD).click();
-        find(SearchForm.LOCATION_TO_INPUT).sendKeys(destination);
-        find(SearchForm.LOCATION_TO_INPUT).sendKeys(Keys.ENTER);
+        searchForm.selectFromLocation(origin);
+        searchForm.selectToLocation(destination);
 
         Date currentDate = new Date();
         Calendar calendar = Calendar.getInstance();
@@ -39,17 +36,7 @@ public class SearchSteps extends UIInteractionSteps {
         calendar.add(Calendar.DATE, stayForDays);
         String dateInTwoWeeks = dateFormat.format(calendar.getTime());
 
-        find(SearchForm.DATE_DEPARTURE_INPUT).type(dateInAWeek);
-        find(SearchForm.DATE_DEPARTURE_INPUT).sendKeys(Keys.ENTER);
-        find(SearchForm.DATE_RETURN_INPUT).type(dateInTwoWeeks);
-        find(SearchForm.DATE_RETURN_INPUT).sendKeys(Keys.ENTER);
-
-        // Close the date picker
-        find(SearchForm.DATE_RETURN_INPUT).sendKeys(Keys.ESCAPE);
-        if (isElementVisible(By.xpath(SearchForm.DATE_PICKER_DONE.getCssOrXPathSelector()))) {
-            find(SearchForm.DATE_PICKER_DONE).click();
-            waitForRenderedElementsToDisappear(By.xpath(SearchForm.DATE_PICKER_DONE.getCssOrXPathSelector()));
-        }
+        searchForm.selectDates(dateInAWeek, dateInTwoWeeks);
 
         find(SearchForm.SEARCH_BUTTON).click();
         find(BEST.getTarget()).withTimeoutOf(Duration.ofSeconds(100)).waitUntilVisible();
@@ -63,5 +50,17 @@ public class SearchSteps extends UIInteractionSteps {
     @Step("Check other results")
     public List<String> getOtherDepartingResultFlights() {
         return searchResults.getResultAirlines(OTHERS);
+    }
+
+    @Step("Get suggested destinations for '{0}'")
+    public List<String> getExploreMapDestinations() {
+        return exploreDestinations.getResultDestinations();
+    }
+
+    @Step("Searches for for possible destinations for '{0}'")
+    public void exploreFlights(String origin) {
+        //TODO(Niko): for some reason origin selection here is flaky
+        searchForm.selectFromLocation(origin);
+        find(SearchForm.EXPLORE_BUTTON).click();
     }
 }
