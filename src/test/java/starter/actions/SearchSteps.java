@@ -2,17 +2,16 @@ package starter.actions;
 
 import net.serenitybdd.annotations.Step;
 import net.serenitybdd.core.steps.UIInteractionSteps;
+import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import starter.pageobjects.SearchForm;
 import starter.pageobjects.SearchResults;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static starter.pageobjects.SearchResults.ResultType.BEST;
 import static starter.pageobjects.SearchResults.ResultType.OTHERS;
@@ -47,6 +46,10 @@ public class SearchSteps extends UIInteractionSteps {
 
         // Close the date picker
         find(SearchForm.DATE_RETURN_INPUT).sendKeys(Keys.ESCAPE);
+        if (isElementVisible(By.xpath(SearchForm.DATE_PICKER_DONE.getCssOrXPathSelector()))) {
+            find(SearchForm.DATE_PICKER_DONE).click();
+            waitForRenderedElementsToDisappear(By.xpath(SearchForm.DATE_PICKER_DONE.getCssOrXPathSelector()));
+        }
 
         find(SearchForm.SEARCH_BUTTON).click();
         find(BEST.getTarget()).withTimeoutOf(Duration.ofSeconds(100)).waitUntilVisible();
